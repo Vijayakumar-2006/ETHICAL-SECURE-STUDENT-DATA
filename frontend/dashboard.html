@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Secure Student Data System</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <nav class="navbar glass-card">
+        <div class="nav-brand">Secure Student Portal</div>
+        <button id="logout-btn" class="btn secondary-btn">Logout</button>
+    </nav>
+    
+    <main class="dashboard-container">
+        <!-- Add Student Form -->
+        <section class="glass-card form-section">
+            <h2>Add New Student Record</h2>
+            <form id="add-student-form">
+                <div class="input-group">
+                    <label for="roll_number">Roll Number</label>
+                    <input type="text" id="roll_number" required placeholder="e.g., CS2026-001">
+                </div>
+                <div class="input-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" required placeholder="Student Name">
+                </div>
+                <div class="input-group">
+                    <label for="sensitive_details">Sensitive Details (e.g. Grades, Contact)</label>
+                    <textarea id="sensitive_details" required placeholder="This data will be AES encrypted before storage"></textarea>
+                </div>
+                <button type="submit" class="btn primary-btn">Add Record Securely</button>
+            </form>
+            <div id="add-msg" class="message"></div>
+        </section>
+
+        <!-- View Students Table -->
+        <section class="glass-card table-section">
+            <h2>Student Directory</h2>
+            <div class="table-responsive">
+                <table id="students-table">
+                    <thead>
+                        <tr>
+                            <th>Roll No</th>
+                            <th>Name</th>
+                            <th>Decrypted Details</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="students-tbody">
+                        <!-- injected by JS -->
+                    </tbody>
+                </table>
+            </div>
+            <div id="fetch-msg" class="message"></div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+    <script>
+        // Check if token exists, else redirect
+        if(!localStorage.getItem('jwt_token')){
+            window.location.href = 'index.html';
+        }
+        // Load data initially
+        window.addEventListener('DOMContentLoaded', fetchStudents);
+    </script>
+</body>
+</html>

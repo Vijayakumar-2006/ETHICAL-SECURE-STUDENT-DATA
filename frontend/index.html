@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Student Data System</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="glass-card">
+            <h1 id="form-title">Login</h1>
+            <p id="form-subtitle">Access the secure portal.</p>
+            
+            <form id="auth-form">
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required placeholder="Enter username">
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required placeholder="Enter password">
+                </div>
+                <button type="submit" class="btn primary-btn" id="submit-btn">Login</button>
+            </form>
+            
+            <p class="toggle-text">
+                <span id="toggle-prompt">Don't have an account?</span>
+                <a href="#" id="toggle-link">Register here</a>
+            </p>
+            <div id="message-container" class="message"></div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
