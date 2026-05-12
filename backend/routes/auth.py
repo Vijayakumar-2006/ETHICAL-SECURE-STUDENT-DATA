@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from datetime import datetime, timedelta
 import jwt
 
-from database import get_db_connection
+from database import get_db_connection, get_cursor
 from security.hashing import hash_password, verify_password
 
 router = APIRouter()
@@ -25,16 +25,16 @@ def create_access_token(data: dict):
 @router.post("/register")
 def register(user: UserAuth):
     conn = get_db_connection()
-    cursor = conn.cursor()
+    cursor = get_cursor(conn)
     
-    cursor.execute("SELECT * FROM users WHERE username = ?", (user.username,))
+    cursor.execute("SELECT * FROM users WHERE username = %s", (user.username,))
     if cursor.fetchone():
         conn.close()
         raise HTTPException(status_code=400, detail="Username already registered")
         
     hashed_pw = hash_password(user.password)
     try:
-        cursor.execute("INSERT INTO users (username, password_hash) VALUES (?, ?)", (user.username, hashed_pw))
+        cursor.execute("INSERT INTO users (username, password_hash) VALUES (%s, %s)", (user.username, hashed_pw))
         conn.commit()
     except Exception:
         conn.close()
@@ -47,8 +47,8 @@ def register(user: UserAuth):
 @router.post("/login")
 def login(user: UserAuth):
     conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE username = ?", (user.username,))
+    cursor = get_cursor(conn)
+    cursor.execute("SELECT * FROM users WHERE username = %s", (user.username,))
     db_user = cursor.fetchone()
     conn.close()
     

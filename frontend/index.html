@@ -22,6 +22,17 @@
                     <label for="password">Password</label>
                     <input type="password" id="password" required placeholder="Enter password">
                 </div>
+                <div class="input-group">
+                    <label id="captcha-label">Security Check</label>
+                    <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                        <canvas id="captcha-canvas" width="150" height="40" style="border-radius: 8px; border: 1px solid var(--card-border); background: #f3f4f6;"></canvas>
+                        <button type="button" id="refresh-captcha" class="btn secondary-btn" style="padding: 0.4rem 0.8rem; width: auto;" title="Refresh CAPTCHA">↻</button>
+                    </div>
+                    <div style="position: relative;">
+                        <input type="text" id="captcha" required placeholder="Enter the text above" style="padding-right: 30px;">
+                        <span id="captcha-status" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 1.2rem;"></span>
+                    </div>
+                </div>
                 <button type="submit" class="btn primary-btn" id="submit-btn">Login</button>
             </form>
             

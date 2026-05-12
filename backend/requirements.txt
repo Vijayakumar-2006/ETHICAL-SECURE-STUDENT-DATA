@@ -4,3 +4,4 @@ passlib[bcrypt]
 PyJWT
 cryptography
 python-multipart
+psycopg2-binary

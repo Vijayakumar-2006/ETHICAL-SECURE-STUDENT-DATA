@@ -1,15 +1,87 @@
-const API_URL = 'http://127.0.0.1:8000/api';
+const API_URL = 'http://127.0.0.1:8001/api';
 
 // --- Auth Logic (index.html) ---
 const authForm = document.getElementById('auth-form');
 if (authForm) {
     let isLogin = true;
+    let expectedCaptcha = '';
     const toggleLink = document.getElementById('toggle-link');
     const formTitle = document.getElementById('form-title');
     const formSubtitle = document.getElementById('form-subtitle');
     const togglePrompt = document.getElementById('toggle-prompt');
     const submitBtn = document.getElementById('submit-btn');
     const msgContainer = document.getElementById('message-container');
+
+    function generateCaptcha() {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+        let captchaText = '';
+        for (let i = 0; i < 6; i++) {
+            captchaText += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        expectedCaptcha = captchaText;
+        
+        const canvas = document.getElementById('captcha-canvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.font = '22px Inter, sans-serif';
+            ctx.fillStyle = '#1e1b4b';
+            ctx.textBaseline = 'middle';
+            
+            for(let i=0; i < captchaText.length; i++) {
+                ctx.save();
+                ctx.translate(15 + i * 20, 20);
+                const rotation = (Math.random() - 0.5) * 0.4;
+                ctx.rotate(rotation);
+                ctx.fillText(captchaText[i], 0, 0);
+                ctx.restore();
+            }
+
+            for (let i = 0; i < 5; i++) {
+                ctx.strokeStyle = `rgba(0,0,0, ${Math.random() * 0.2 + 0.1})`;
+                ctx.beginPath();
+                ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                ctx.stroke();
+            }
+        }
+
+        const captchaInput = document.getElementById('captcha');
+        if (captchaInput) {
+            captchaInput.value = '';
+            captchaInput.style.borderColor = '';
+            const statusEl = document.getElementById('captcha-status');
+            if (statusEl) statusEl.textContent = '';
+        }
+    }
+    generateCaptcha();
+
+    const refreshBtn = document.getElementById('refresh-captcha');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', generateCaptcha);
+    }
+
+    const captchaInputField = document.getElementById('captcha');
+    if (captchaInputField) {
+        captchaInputField.addEventListener('input', (e) => {
+            const statusEl = document.getElementById('captcha-status');
+            if (!statusEl) return;
+            
+            if (e.target.value === '') {
+                statusEl.textContent = '';
+                captchaInputField.style.borderColor = '';
+            } else if (e.target.value === expectedCaptcha) {
+                statusEl.textContent = '✓';
+                statusEl.style.color = 'var(--success-color, #10b981)';
+                captchaInputField.style.borderColor = 'var(--success-color, #10b981)';
+            } else {
+                statusEl.textContent = '✗';
+                statusEl.style.color = 'var(--error-color, #ef4444)';
+                captchaInputField.style.borderColor = 'var(--error-color, #ef4444)';
+            }
+        });
+    }
 
     toggleLink.addEventListener('click', (e) => {
         e.preventDefault();
@@ -20,10 +92,19 @@ if (authForm) {
         toggleLink.textContent = isLogin ? "Register here" : "Login here";
         submitBtn.textContent = isLogin ? "Login" : "Register";
         msgContainer.textContent = '';
+        generateCaptcha();
     });
 
     authForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        
+        const captchaInput = document.getElementById('captcha');
+        if (captchaInput && captchaInput.value !== expectedCaptcha) {
+            showMessage(msgContainer, "Incorrect CAPTCHA answer", "error-msg");
+            generateCaptcha();
+            return;
+        }
+
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
         
@@ -50,12 +131,15 @@ if (authForm) {
                     togglePrompt.textContent = "Don't have an account?";
                     toggleLink.textContent = "Register here";
                     submitBtn.textContent = "Login";
+                    generateCaptcha();
                 }
             } else {
                 showMessage(msgContainer, data.detail || "An error occurred", "error-msg");
+                generateCaptcha();
             }
         } catch (error) {
             showMessage(msgContainer, "Server unreachable", "error-msg");
+            generateCaptcha();
         }
     });
 }

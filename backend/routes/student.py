@@ -3,7 +3,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 import jwt
 
-from database import get_db_connection
+from database import get_db_connection, get_cursor
 from security.encryption import encrypt_data, decrypt_data
 from routes.auth import JWT_SECRET, ALGORITHM
 
@@ -29,9 +29,9 @@ def add_student(student: StudentCreate, current_user: str = Depends(verify_token
     encrypted_details = encrypt_data(student.sensitive_details)
     
     conn = get_db_connection()
-    cursor = conn.cursor()
+    cursor = get_cursor(conn)
     try:
-        cursor.execute("INSERT INTO students (roll_number, name, encrypted_data) VALUES (?, ?, ?)", 
+        cursor.execute("INSERT INTO students (roll_number, name, encrypted_data) VALUES (%s, %s, %s)", 
                        (student.roll_number, student.name, encrypted_details))
         conn.commit()
     except Exception:
@@ -44,7 +44,7 @@ def add_student(student: StudentCreate, current_user: str = Depends(verify_token
 @router.get("/")
 def get_students(current_user: str = Depends(verify_token)):
     conn = get_db_connection()
-    cursor = conn.cursor()
+    cursor = get_cursor(conn)
     cursor.execute("SELECT * FROM students")
     students = cursor.fetchall()
     conn.close()
@@ -68,8 +68,8 @@ def get_students(current_user: str = Depends(verify_token)):
 @router.delete("/{student_id}")
 def delete_student(student_id: int, current_user: str = Depends(verify_token)):
     conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM students WHERE id = ?", (student_id,))
+    cursor = get_cursor(conn)
+    cursor.execute("DELETE FROM students WHERE id = %s", (student_id,))
     conn.commit()
     deleted = cursor.rowcount
     conn.close()
