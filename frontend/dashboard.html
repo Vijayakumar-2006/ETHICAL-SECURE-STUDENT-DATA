@@ -4,37 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Secure Student Data System</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=20260513-3">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body class="dashboard-body">
     <nav class="navbar glass-card">
         <div class="nav-brand">Secure Student Portal</div>
-        <button id="logout-btn" class="btn secondary-btn">Logout</button>
+        <div class="nav-actions">
+            <button id="add-btn" class="btn secondary-btn">Add</button>
+            <button id="nav-edit-btn" class="btn secondary-btn">Edit</button>
+            <button id="logout-btn" class="btn secondary-btn">Logout</button>
+        </div>
     </nav>
     
     <main class="dashboard-container">
-        <!-- Add Student Form -->
-        <section class="glass-card form-section">
-            <h2>Add New Student Record</h2>
-            <form id="add-student-form">
-                <div class="input-group">
-                    <label for="roll_number">Roll Number</label>
-                    <input type="text" id="roll_number" required placeholder="e.g., CS2026-001">
-                </div>
-                <div class="input-group">
-                    <label for="name">Full Name</label>
-                    <input type="text" id="name" required placeholder="Student Name">
-                </div>
-                <div class="input-group">
-                    <label for="sensitive_details">Sensitive Details (e.g. Grades, Contact)</label>
-                    <textarea id="sensitive_details" required placeholder="This data will be AES encrypted before storage"></textarea>
-                </div>
-                <button type="submit" class="btn primary-btn">Add Record Securely</button>
-            </form>
-            <div id="add-msg" class="message"></div>
-        </section>
-
         <!-- View Students Table -->
         <section class="glass-card table-section">
             <h2>Student Directory</h2>
@@ -42,9 +25,17 @@
                 <table id="students-table">
                     <thead>
                         <tr>
+                            <th>Sl No</th>
                             <th>Roll No</th>
                             <th>Name</th>
-                            <th>Decrypted Details</th>
+                            <th>Stream</th>
+                            <th>1st Offer</th>
+                            <th>Company 1</th>
+                            <th>CTC 1</th>
+                            <th>Stipend 1</th>
+                            <th>2nd Offer</th>
+                            <th>Company 2</th>
+                            <th>CTC 2</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -56,8 +47,142 @@
             <div id="fetch-msg" class="message"></div>
         </section>
     </main>
+    
+    <div id="add-modal" class="modal-overlay" hidden>
+        <section class="glass-card modal-card">
+            <div class="modal-header">
+                <h2>Add New Student Record</h2>
+                <button id="close-add-modal" class="btn secondary-btn" type="button">Close</button>
+            </div>
+           
+            <form id="add-student-form">
+                <div class="input-group">
+                    <label for="roll_number">Roll Number</label>
+                    <input type="text" id="roll_number" required placeholder="e.g., CS2026-001">
+                </div>
+                <div class="input-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" required placeholder="Student Name">
+                </div>
+                <div class="input-group">
+                    <label for="be_stream">Stream</label>
+                    <input type="text" id="be_stream" placeholder="e.g., CSE">
+                </div>
+                <div class="input-group">
+                    <label for="first_offer">1st Offer</label>
+                    <select id="first_offer">
+                        <option value="">Select</option>
+                        <option value="true">YES</option>
+                        <option value="false">NO</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="company_1">Company 1</label>
+                    <input type="text" id="company_1" placeholder="First company name" disabled>
+                </div>
+                <div class="input-group">
+                    <label for="ctc_1">CTC 1</label>
+                    <input type="text" id="ctc_1" placeholder="e.g., 4.5" disabled>
+                </div>
+                <div class="input-group">
+                    <label for="stipend_1">Stipend 1</label>
+                    <input type="text" id="stipend_1" placeholder="e.g., 20000" disabled>
+                </div>
+                <div class="input-group">
+                    <label for="second_offer">2nd Offer</label>
+                    <select id="second_offer" disabled>
+                        <option value="">Select</option>
+                        <option value="true">YES</option>
+                        <option value="false">NO</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="company_2">Company 2</label>
+                    <input type="text" id="company_2" placeholder="Second company name" disabled>
+                </div>
+                <div class="input-group">
+                    <label for="ctc_2">CTC 2</label>
+                    <input type="text" id="ctc_2" placeholder="e.g., 10" disabled>
+                </div>
+                <button type="submit" class="btn primary-btn">Add Record Securely</button>
+            </form>
+            <div id="add-msg" class="message"></div>
+        </section>
+    </div>
 
-    <script src="app.js"></script>
+    <div id="edit-modal" class="modal-overlay" hidden>
+        <section class="glass-card modal-card">
+            <div class="modal-header">
+                <h2>Edit Student Record</h2>
+                <button id="close-edit-modal" class="btn secondary-btn" type="button">Close</button>
+            </div>
+            <form id="edit-student-form">
+                <input type="hidden" id="edit_student_id">
+                <div class="input-group">
+                    <label for="select_edit_student">Select Student to Edit</label>
+                    <select id="select_edit_student" required>
+                        <option value="">-- Choose a student --</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="edit_serial_no">Sl No</label>
+                    <input type="number" id="edit_serial_no" placeholder="e.g., 61">
+                </div>
+                <div class="input-group">
+                    <label for="edit_roll_number">Roll Number</label>
+                    <input type="text" id="edit_roll_number" required placeholder="e.g., CS2026-001">
+                </div>
+                <div class="input-group">
+                    <label for="edit_name">Full Name</label>
+                    <input type="text" id="edit_name" required placeholder="Student Name">
+                </div>
+                <div class="input-group">
+                    <label for="edit_be_stream">Stream</label>
+                    <input type="text" id="edit_be_stream" placeholder="e.g., CSE">
+                </div>
+                <div class="input-group">
+                    <label for="edit_first_offer">1st Offer</label>
+                    <select id="edit_first_offer">
+                        <option value="">Select</option>
+                        <option value="true">YES</option>
+                        <option value="false">NO</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="edit_company_1">Company 1</label>
+                    <input type="text" id="edit_company_1" placeholder="First company name" disabled>
+                </div>
+                <div class="input-group">
+                    <label for="edit_ctc_1">CTC 1</label>
+                    <input type="text" id="edit_ctc_1" placeholder="e.g., 4.5" disabled>
+                </div>
+                <div class="input-group">
+                    <label for="edit_stipend_1">Stipend 1</label>
+                    <input type="text" id="edit_stipend_1" placeholder="e.g., 20000" disabled>
+                </div>
+                <div class="input-group">
+                    <label for="edit_second_offer">2nd Offer</label>
+                    <select id="edit_second_offer" disabled>
+                        <option value="">Select</option>
+                        <option value="true">YES</option>
+                        <option value="false">NO</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="edit_company_2">Company 2</label>
+                    <input type="text" id="edit_company_2" placeholder="Second company name" disabled>
+                </div>
+                <div class="input-group">
+                    <label for="edit_ctc_2">CTC 2</label>
+                    <input type="text" id="edit_ctc_2" placeholder="e.g., 10" disabled>
+                </div>
+                <button type="submit" class="btn primary-btn">Save Changes</button>
+            </form>
+            <div id="edit-msg" class="message"></div>
+        </section>
+    </div>
+
+    <script src="app.js?v=20260513-8"></script>
     <script>
         // Check if token exists, else redirect
         if(!localStorage.getItem('jwt_token')){
@@ -65,6 +190,60 @@
         }
         // Load data initially
         window.addEventListener('DOMContentLoaded', fetchStudents);
-    </script>
+
+        function toggleFirstOfferFields() {
+    const firstOffer = document.getElementById('first_offer').value;
+    const enable = firstOffer === 'true';
+    const fields = ['company_1', 'ctc_1', 'stipend_1', 'second_offer', 'company_2', 'ctc_2'];
+    fields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.disabled = !enable;
+            if (!enable) el.value = '';
+        }
+    });
+}
+
+function toggleEditFirstOfferFields() {
+    const firstOffer = document.getElementById('edit_first_offer').value;
+    const enable = firstOffer === 'true';
+    const fields = ['edit_company_1', 'edit_ctc_1', 'edit_stipend_1', 'edit_second_offer', 'edit_company_2', 'edit_ctc_2'];
+    fields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.disabled = !enable;
+            if (!enable) el.value = '';
+        }
+    });
+}
+
+document.getElementById('first_offer')?.addEventListener('change', toggleFirstOfferFields);
+
+document.getElementById('edit_first_offer')?.addEventListener('change', toggleEditFirstOfferFields);
+
+// Ensure fields are correctly set when modals open
+function openAddModal() {
+    if (addModal) {
+        addModal.removeAttribute('hidden');
+        toggleFirstOfferFields();
+    }
+}
+function openEditModalFor(id) {
+    if (editModal) {
+        populateEditDropdown(id);
+        editModal.removeAttribute('hidden');
+        toggleEditFirstOfferFields();
+    }
+}
+
+// Replace existing click handlers with the new ones
+if (addBtn && addModal) {
+    addBtn.removeEventListener('click', () => { addModal.removeAttribute('hidden'); });
+    addBtn.addEventListener('click', openAddModal);
+}
+if (navEditBtn && editModal) {
+    navEditBtn.removeEventListener('click', () => { populateEditDropdown(); editModal.removeAttribute('hidden'); });
+    navEditBtn.addEventListener('click', () => { populateEditDropdown(); editModal.removeAttribute('hidden'); toggleEditFirstOfferFields(); });
+}</script>
 </body>
 </html>

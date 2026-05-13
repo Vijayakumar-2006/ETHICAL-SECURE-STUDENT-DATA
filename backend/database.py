@@ -26,11 +26,31 @@ def init_db():
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS students (
                 id SERIAL PRIMARY KEY,
+                serial_no INTEGER,
                 roll_number TEXT UNIQUE NOT NULL,
                 name TEXT NOT NULL,
-                encrypted_data TEXT NOT NULL
+                be_stream TEXT,
+                first_offer BOOLEAN,
+                company_1 TEXT,
+                ctc_1 TEXT,
+                stipend_1 TEXT,
+                second_offer BOOLEAN,
+                company_2 TEXT,
+                ctc_2 TEXT,
+                assigned_username TEXT
             )
         ''')
+        # Lightweight migrations for existing databases.
+        cursor.execute("ALTER TABLE students ADD COLUMN IF NOT EXISTS serial_no INTEGER")
+        cursor.execute("ALTER TABLE students ADD COLUMN IF NOT EXISTS assigned_username TEXT")
+        cursor.execute("ALTER TABLE students ADD COLUMN IF NOT EXISTS be_stream TEXT")
+        cursor.execute("ALTER TABLE students ADD COLUMN IF NOT EXISTS first_offer BOOLEAN")
+        cursor.execute("ALTER TABLE students ADD COLUMN IF NOT EXISTS company_1 TEXT")
+        cursor.execute("ALTER TABLE students ADD COLUMN IF NOT EXISTS ctc_1 TEXT")
+        cursor.execute("ALTER TABLE students ADD COLUMN IF NOT EXISTS stipend_1 TEXT")
+        cursor.execute("ALTER TABLE students ADD COLUMN IF NOT EXISTS second_offer BOOLEAN")
+        cursor.execute("ALTER TABLE students ADD COLUMN IF NOT EXISTS company_2 TEXT")
+        cursor.execute("ALTER TABLE students ADD COLUMN IF NOT EXISTS ctc_2 TEXT")
         conn.commit()
         conn.close()
         print("Connected to PostgreSQL and tables created successfully.")

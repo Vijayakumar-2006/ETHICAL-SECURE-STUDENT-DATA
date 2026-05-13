@@ -147,6 +147,16 @@ if (authForm) {
 // --- Dashboard Logic (dashboard.html) ---
 const addStudentForm = document.getElementById('add-student-form');
 const logoutBtn = document.getElementById('logout-btn');
+const addBtn = document.getElementById('add-btn');
+const addModal = document.getElementById('add-modal');
+const closeAddModalBtn = document.getElementById('close-add-modal');
+
+const navEditBtn = document.getElementById('nav-edit-btn');
+const editModal = document.getElementById('edit-modal');
+const closeEditModalBtn = document.getElementById('close-edit-modal');
+const editStudentForm = document.getElementById('edit-student-form');
+const selectEditStudent = document.getElementById('select_edit_student');
+let cachedStudents = [];
 
 if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
@@ -155,14 +165,123 @@ if (logoutBtn) {
     });
 }
 
+if (addBtn && addModal) {
+    addBtn.addEventListener('click', () => {
+        addModal.removeAttribute('hidden');
+        toggleFirstOfferFields();
+    });
+}
+
+if (closeAddModalBtn && addModal) {
+    closeAddModalBtn.addEventListener('click', () => {
+        addModal.setAttribute('hidden', 'hidden');
+    });
+}
+
+if (navEditBtn && editModal) {
+    navEditBtn.addEventListener('click', () => {
+        populateEditDropdown();
+        editModal.removeAttribute('hidden');
+        toggleEditFirstOfferFields();
+    });
+}
+
+if (closeEditModalBtn && editModal) {
+    closeEditModalBtn.addEventListener('click', () => {
+        editModal.setAttribute('hidden', 'hidden');
+    });
+}
+
+function populateEditDropdown(selectedId = null) {
+    if (!selectEditStudent) return;
+    selectEditStudent.innerHTML = '<option value="">-- Choose a student --</option>';
+    cachedStudents.forEach(st => {
+        const opt = document.createElement('option');
+        opt.value = st.id;
+        opt.textContent = `${st.roll_number} - ${st.name}`;
+        if (selectedId && st.id === selectedId) {
+            opt.selected = true;
+        }
+        selectEditStudent.appendChild(opt);
+    });
+    handleEditSelectionChange(selectedId);
+}
+
+function handleEditSelectionChange(selectedId) {
+    const id = selectedId || (selectEditStudent ? Number(selectEditStudent.value) : null);
+    const st = cachedStudents.find(s => s.id === id);
+    if (st) {
+        document.getElementById('edit_student_id').value = st.id;
+        document.getElementById('edit_serial_no').value = st.serial_no ?? '';
+        document.getElementById('edit_roll_number').value = st.roll_number ?? '';
+        document.getElementById('edit_name').value = st.name ?? '';
+        document.getElementById('edit_be_stream').value = st.be_stream ?? '';
+        document.getElementById('edit_first_offer').value = st.first_offer === null ? '' : st.first_offer.toString();
+        document.getElementById('edit_company_1').value = st.company_1 ?? '';
+        document.getElementById('edit_ctc_1').value = st.ctc_1 ?? '';
+        document.getElementById('edit_stipend_1').value = st.stipend_1 ?? '';
+        document.getElementById('edit_second_offer').value = st.second_offer === null ? '' : st.second_offer.toString();
+        document.getElementById('edit_company_2').value = st.company_2 ?? '';
+        document.getElementById('edit_ctc_2').value = st.ctc_2 ?? '';
+    } else {
+        document.getElementById('edit_student_id').value = '';
+        document.getElementById('edit_serial_no').value = '';
+        document.getElementById('edit_roll_number').value = '';
+        document.getElementById('edit_name').value = '';
+        document.getElementById('edit_be_stream').value = '';
+        document.getElementById('edit_first_offer').value = '';
+        document.getElementById('edit_company_1').value = '';
+        document.getElementById('edit_ctc_1').value = '';
+        document.getElementById('edit_stipend_1').value = '';
+        document.getElementById('edit_second_offer').value = '';
+        document.getElementById('edit_company_2').value = '';
+        document.getElementById('edit_ctc_2').value = '';
+    }
+}
+
+if (selectEditStudent) {
+    selectEditStudent.addEventListener('change', () => {
+        handleEditSelectionChange();
+    });
+}
+
+function openEditModalFor(id) {
+    if (editModal) {
+        populateEditDropdown(id);
+        editModal.removeAttribute('hidden');
+        toggleEditFirstOfferFields();
+    }
+}
+
 if (addStudentForm) {
     addStudentForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        const serialNoRaw = document.getElementById('serial_no').value;
         const roll_number = document.getElementById('roll_number').value;
         const name = document.getElementById('name').value;
-        const sensitive_details = document.getElementById('sensitive_details').value;
+        const be_stream = document.getElementById('be_stream').value;
+        const firstOfferRaw = document.getElementById('first_offer').value;
+        const company_1 = document.getElementById('company_1').value;
+        const ctc_1 = document.getElementById('ctc_1').value;
+        const stipend_1 = document.getElementById('stipend_1').value;
+        const secondOfferRaw = document.getElementById('second_offer').value;
+        const company_2 = document.getElementById('company_2').value;
+        const ctc_2 = document.getElementById('ctc_2').value;
         const token = localStorage.getItem('jwt_token');
         const msgContainer = document.getElementById('add-msg');
+        const payload = {
+            serial_no: serialNoRaw ? Number(serialNoRaw) : null,
+            roll_number,
+            name,
+            be_stream: be_stream || null,
+            first_offer: firstOfferRaw === '' ? null : firstOfferRaw === 'true',
+            company_1: company_1 || null,
+            ctc_1: ctc_1 || null,
+            stipend_1: stipend_1 || null,
+            second_offer: secondOfferRaw === '' ? null : secondOfferRaw === 'true',
+            company_2: company_2 || null,
+            ctc_2: ctc_2 || null
+        };
 
         try {
             const response = await fetch(`${API_URL}/students/`, {
@@ -171,16 +290,79 @@ if (addStudentForm) {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ roll_number, name, sensitive_details })
+                body: JSON.stringify(payload)
             });
             
             const data = await response.json();
             if (response.ok) {
-                showMessage(msgContainer, "Securely added and encrypted!", "success-msg");
+                showMessage(msgContainer, "Student securely added!", "success-msg");
                 addStudentForm.reset();
+                if (addModal) {
+                    addModal.setAttribute('hidden', 'hidden');
+                }
                 fetchStudents();
             } else {
                 showMessage(msgContainer, data.detail || "Error adding student", "error-msg");
+            }
+        } catch (error) {
+             showMessage(msgContainer, "Server error", "error-msg");
+        }
+    });
+}
+
+if (editStudentForm) {
+    editStudentForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('edit_student_id').value;
+        if (!id) return;
+
+        const serialNoRaw = document.getElementById('edit_serial_no').value;
+        const roll_number = document.getElementById('edit_roll_number').value;
+        const name = document.getElementById('edit_name').value;
+        const be_stream = document.getElementById('edit_be_stream').value;
+        const firstOfferRaw = document.getElementById('edit_first_offer').value;
+        const company_1 = document.getElementById('edit_company_1').value;
+        const ctc_1 = document.getElementById('edit_ctc_1').value;
+        const stipend_1 = document.getElementById('edit_stipend_1').value;
+        const secondOfferRaw = document.getElementById('edit_second_offer').value;
+        const company_2 = document.getElementById('edit_company_2').value;
+        const ctc_2 = document.getElementById('edit_ctc_2').value;
+        const token = localStorage.getItem('jwt_token');
+        const msgContainer = document.getElementById('edit-msg');
+
+        const payload = {
+            serial_no: serialNoRaw ? Number(serialNoRaw) : null,
+            roll_number,
+            name,
+            be_stream: be_stream || null,
+            first_offer: firstOfferRaw === '' ? null : firstOfferRaw === 'true',
+            company_1: company_1 || null,
+            ctc_1: ctc_1 || null,
+            stipend_1: stipend_1 || null,
+            second_offer: secondOfferRaw === '' ? null : secondOfferRaw === 'true',
+            company_2: company_2 || null,
+            ctc_2: ctc_2 || null
+        };
+
+        try {
+            const response = await fetch(`${API_URL}/students/${id}`, {
+                method: 'PUT',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
+            });
+            
+            const data = await response.json();
+            if (response.ok) {
+                showMessage(document.getElementById('fetch-msg'), "Student updated successfully!", "success-msg");
+                if (editModal) {
+                    editModal.setAttribute('hidden', 'hidden');
+                }
+                fetchStudents();
+            } else {
+                showMessage(msgContainer, data.detail || "Error updating student", "error-msg");
             }
         } catch (error) {
              showMessage(msgContainer, "Server error", "error-msg");
@@ -209,14 +391,23 @@ async function fetchStudents() {
         }
 
         const students = await response.json();
+        cachedStudents = students;
         tbody.innerHTML = '';
         
-        students.forEach(student => {
+        students.forEach((student, index) => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
+                <td>${index + 1}</td>
                 <td>${student.roll_number}</td>
                 <td>${student.name}</td>
-                <td><small>${student.sensitive_details}</small></td>
+                <td>${student.be_stream ?? ''}</td>
+                <td>${student.first_offer === null || student.first_offer === undefined ? '' : (student.first_offer ? 'YES' : 'NO')}</td>
+                <td>${student.company_1 ?? ''}</td>
+                <td>${student.ctc_1 ?? ''}</td>
+                <td>${student.stipend_1 ?? ''}</td>
+                <td>${student.second_offer === null || student.second_offer === undefined ? '' : (student.second_offer ? 'YES' : 'NO')}</td>
+                <td>${student.company_2 ?? ''}</td>
+                <td>${student.ctc_2 ?? ''}</td>
                 <td><button class="danger-btn" onclick="deleteStudent(${student.id})">Delete</button></td>
             `;
             tbody.appendChild(tr);
