@@ -1,25 +1,8 @@
-# fastapi: Provides the backend web framework used by the project.
-#   Used in backend/main.py to create the FastAPI app, configure CORS, mount static files,
-#   and include the auth and student routers.
-#   Used in backend/routes/auth.py and backend/routes/student.py to define API routes,
-#   request models, dependency injection, and HTTP exceptions.
-fastapi
-
-# uvicorn: ASGI server that runs the FastAPI application locally.
-#   Used in backend/main.py inside the __main__ block to start the server on port 8001.
-uvicorn
-
-# passlib[bcrypt]: Secure password hashing library.
-#   Used in backend/security/hashing.py to hash passwords on registration,
-#   and to verify passwords during login in backend/routes/auth.py.
-passlib[bcrypt]
-
-# PyJWT: JSON Web Token library for creating and validating auth tokens.
-#   Used in backend/routes/auth.py to encode access tokens for logged-in users.
-#   Used in backend/routes/student.py to decode and verify bearer tokens for protected student APIs.
-PyJWT
-
-# psycopg2-binary: PostgreSQL database adapter for Python.
-#   Used in backend/database.py to connect to the PostgreSQL database,
-#   create cursors, and run SQL for user and student data operations.
-psycopg2-binary
+fastapi==0.111.0
+uvicorn==0.30.1
+passlib[bcrypt]==1.7.4
+PyJWT==2.8.0
+psycopg2-binary==2.9.9
+python-dotenv==1.0.1
+python-multipart==0.0.9
+pypdf==4.2.0

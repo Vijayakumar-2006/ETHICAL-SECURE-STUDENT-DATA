@@ -4,25 +4,149 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Secure Student Data System</title>
-    <link rel="stylesheet" href="style.css?v=20260513-3">
+    <link rel="stylesheet" href="style.css?v=20260605-3">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body class="dashboard-body">
     <nav class="navbar glass-card">
-        <div class="nav-brand">Secure Student Portal</div>
+        <div class="nav-brand" id="nav-brand-greeting">Secure Student Portal</div>
         <div class="nav-actions">
-            <button id="add-btn" class="btn secondary-btn">Add</button>
-            <button id="nav-edit-btn" class="btn secondary-btn">Edit</button>
-            <button id="logout-btn" class="btn secondary-btn">Logout</button>
+            <!-- Navigation Links -->
+            <a href="#" id="nav-professors" class="nav-link" style="display: none;">Professors</a>
+            <a href="#" id="nav-settings" class="nav-link" style="display: none;">Settings</a>
+            <a href="#student-directory-section" id="nav-student-details" class="nav-link">Student Details</a>
+            
+            <!-- Profile Avatar Dropdown Container -->
+            <div class="profile-dropdown-container">
+                <button id="profile-btn" class="btn profile-avatar-btn">
+                    <div class="avatar-initials" id="avatar-initials">U</div>
+                    <span class="profile-short-name" id="profile-short-name">User</span>
+                    <span class="arrow-down">▼</span>
+                </button>
+                <div id="profile-dropdown" class="profile-dropdown" hidden>
+                    <div class="profile-header">
+                        <div class="profile-avatar" id="dropdown-avatar-initials">U</div>
+                        <div class="profile-info">
+                            <h4 id="profile-username">User</h4>
+                            <span class="profile-role">Assistant Professor</span>
+                        </div>
+                    </div>
+                    <div class="profile-divider"></div>
+                    <a href="#" class="dropdown-item">👤 My Profile</a>
+                    <a href="#" id="dropdown-settings-link" class="dropdown-item">⚙️ Settings</a>
+                    <div id="profile-status-container" class="profile-status-select-container dropdown-item">
+                        <span>Status:</span>
+                        <select id="profile-status-select">
+                            <option value="present">🟢 Present</option>
+                            <option value="absent">🟡 Absent</option>
+                        </select>
+                    </div>
+                    <div class="profile-divider"></div>
+                    <button id="logout-btn" class="btn logout-btn">
+                        <span>↩</span> Logout
+                    </button>
+                </div>
+            </div>
         </div>
     </nav>
     
     <main class="dashboard-container">
+        <!-- Admin Dashboard Section -->
+        <section id="professor-directory-section" class="glass-card directory-section" hidden>
+            <!-- Breadcrumbs -->
+            <div class="breadcrumb">Dashboard / Professors</div>
+            
+            <div class="dashboard-header-container" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h1 class="dashboard-title" style="margin-bottom: 0.25rem;">Professor Management</h1>
+                    <p class="dashboard-subtitle" style="margin-bottom: 0;">Manage faculty members and access assigned student records.</p>
+                </div>
+                <button id="add-prof-btn" class="btn action-btn primary-btn" style="width: auto;">
+                    <!-- Plus Icon -->
+                    <svg class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg> Add Professor
+                </button>
+            </div>
+
+            <!-- Modern Statistics Section -->
+            <div class="stats-row stats-row-two-cards">
+                <div class="stats-card">
+                    <div class="stats-icon">👥</div>
+                    <div class="stats-info">
+                        <span class="stats-label">Total Professors</span>
+                        <h3 id="stat-total-professors" class="stats-value">0</h3>
+                    </div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-icon">🎓</div>
+                    <div class="stats-info">
+                        <span class="stats-label">Total Students</span>
+                        <h3 id="stat-total-students" class="stats-value">0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search and Sort Toolbar -->
+            <div class="toolbar-row">
+                <div class="search-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="prof-search-input" placeholder="Search professor by name...">
+                </div>
+                <div class="sort-wrapper">
+                    <label for="prof-sort-select">Sort by:</label>
+                    <select id="prof-sort-select">
+                        <option value="name-asc">Name A-Z</option>
+                        <option value="name-desc">Name Z-A</option>
+                        <option value="count-desc">Student Count High-Low</option>
+                        <option value="count-asc">Student Count Low-High</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="professors-grid" class="professors-grid">
+                <!-- Injected dynamically by JS -->
+            </div>
+        </section>
+
         <!-- View Students Table -->
-        <section class="glass-card table-section">
-            <h2>Student Directory</h2>
-            <div class="table-responsive">
-                <table id="students-table">
+        <section id="student-directory-section" class="glass-card table-section">
+            <button id="back-to-dashboard-btn" class="btn secondary-btn" style="margin-bottom: 1.5rem; display: none; padding: 0.5rem 1rem; font-size: 0.9rem; width: auto;">
+                ← Back to Professors
+            </button>
+            
+            <!-- Professional Student Directory Header -->
+            <div id="prof-directory-header-card" class="glass-card prof-header-card" style="display: none; margin-bottom: 1.5rem;">
+                <!-- Dynamically populated by JS -->
+            </div>
+            <div class="section-header">
+                <h2 id="directory-title">Student Directory</h2>
+                <div class="directory-actions">
+                    <button id="add-btn" class="btn action-btn primary-btn">
+                        <!-- Plus SVG Icon -->
+                        <svg class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg> Add
+                    </button>
+                    <button id="nav-edit-btn" class="btn action-btn secondary-btn" type="button" aria-pressed="false">
+                        <!-- Edit/Pencil SVG Icon -->
+                        <svg class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg> <span class="edit-btn-label">Edit</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search-input" placeholder="Search students by name, roll number, or company...">
+            </div>
+            <div class="table-responsive student-directory-scroll">
+                <table id="students-table" class="enterprise-student-table">
                     <thead>
                         <tr>
                             <th>Sl No</th>
@@ -36,7 +160,6 @@
                             <th>2nd Offer</th>
                             <th>Company 2</th>
                             <th>CTC 2</th>
-                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody id="students-tbody">
@@ -45,6 +168,440 @@
                 </table>
             </div>
             <div id="fetch-msg" class="message"></div>
+        </section>
+
+        <!-- User Settings Section -->
+        <section id="settings-section" class="glass-card settings-section" hidden>
+            <div class="breadcrumb">Dashboard / Settings</div>
+            
+            <div class="settings-container-layout">
+                <!-- Sidebar Menu -->
+                <aside class="settings-sidebar">
+                    <button class="settings-tab-btn active" data-tab="account">⚙️ Account</button>
+                    <button class="settings-tab-btn" data-tab="security">🔒 Security</button>
+                    <button class="settings-tab-btn" data-tab="appearance">🎨 Appearance</button>
+                    <button class="settings-tab-btn" data-tab="notifications">🔔 Notifications</button>
+                    <button class="settings-tab-btn" data-tab="preferences">🖥 Preferences</button>
+                    <button class="settings-tab-btn" data-tab="privacy">📂 Privacy</button>
+                </aside>
+                
+                <!-- Main Content Area -->
+                <div class="settings-content-panel">
+                    <!-- Account Tab -->
+                    <div class="settings-tab-pane active" id="tab-pane-account">
+                        <h2 class="settings-pane-title">Account Information</h2>
+                        <p class="settings-pane-desc">Update your personal details and public profile avatar.</p>
+                        
+                        <div class="settings-avatar-section">
+                            <div class="settings-avatar-container">
+                                <div id="settings-avatar-placeholder" class="settings-avatar-placeholder">U</div>
+                                <img id="settings-avatar-img" src="" alt="Profile Picture" style="display: none;">
+                            </div>
+                            <div class="settings-avatar-actions">
+                                <label for="avatar-upload-input" class="btn primary-btn" style="width: auto; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                    📤 Upload Photo
+                                </label>
+                                <input type="file" id="avatar-upload-input" accept=".jpg, .jpeg, .png" style="display: none;">
+                                <button id="btn-remove-avatar" class="btn danger-btn" style="width: auto; padding: 0.5rem 1rem; display: inline-flex;">Remove</button>
+                                <span class="input-hint" style="display: block; margin-top: 0.25rem;">JPG/PNG only, max 5MB.</span>
+                            </div>
+                        </div>
+                        
+                        <form id="settings-profile-form" style="margin-top: 1.5rem;">
+                            <div class="input-group">
+                                <label for="settings-fullname">Full Name</label>
+                                <input type="text" id="settings-fullname" required placeholder="Full Name">
+                            </div>
+                            <div class="input-group">
+                                <label for="settings-username">Username</label>
+                                <input type="text" id="settings-username" readonly disabled style="opacity: 0.6; cursor: not-allowed;">
+                                <span class="input-hint">Usernames cannot be changed.</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="settings-email">Email Address</label>
+                                <input type="email" id="settings-email" placeholder="email@college.edu">
+                            </div>
+                            <div class="input-group">
+                                <label for="settings-phone">Phone Number</label>
+                                <input type="text" id="settings-phone" placeholder="Phone Number">
+                            </div>
+                            <button type="submit" class="btn primary-btn" style="width: auto; padding: 0.75rem 2rem; margin-top: 0.5rem;">Save Changes</button>
+                        </form>
+                        <div id="settings-profile-msg" class="message"></div>
+                    </div>
+                    
+                    <!-- Security Tab -->
+                    <div class="settings-tab-pane" id="tab-pane-security">
+                        <h2 class="settings-pane-title">Security Settings</h2>
+                        <p class="settings-pane-desc">Update your password to keep your account secure.</p>
+                        
+                        <form id="settings-password-form" style="margin-top: 1.5rem;">
+                            <div class="input-group">
+                                <label for="settings-curr-pass">Current Password</label>
+                                <div style="position: relative; width: 100%;">
+                                    <input type="password" id="settings-curr-pass" required placeholder="Current Password" style="padding-right: 2.5rem;">
+                                    <span class="toggle-password-eye" onclick="togglePasswordVisibility('settings-curr-pass')" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); cursor: pointer; user-select: none;">👁️</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="settings-new-pass">New Password</label>
+                                <div style="position: relative; width: 100%;">
+                                    <input type="password" id="settings-new-pass" required placeholder="New Password" style="padding-right: 2.5rem;">
+                                    <span class="toggle-password-eye" onclick="togglePasswordVisibility('settings-new-pass')" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); cursor: pointer; user-select: none;">👁️</span>
+                                </div>
+                                <div class="password-strength-container" style="margin-top: 0.5rem;">
+                                    <div class="strength-bar-bg" style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+                                        <div id="password-strength-bar" style="width: 0%; height: 100%; background: var(--error-color); transition: width 0.3s ease, background 0.3s ease;"></div>
+                                    </div>
+                                    <span id="password-strength-text" style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem; display: block;">Strength: Weak</span>
+                                </div>
+                                <span class="input-hint" style="margin-top: 0.5rem; display: block; line-height: 1.4;">
+                                    Must be 8+ characters, with at least one uppercase, lowercase, number, and special character.
+                                </span>
+                            </div>
+                            <div class="input-group">
+                                <label for="settings-confirm-pass">Confirm New Password</label>
+                                <div style="position: relative; width: 100%;">
+                                    <input type="password" id="settings-confirm-pass" required placeholder="Confirm New Password" style="padding-right: 2.5rem;">
+                                    <span class="toggle-password-eye" onclick="togglePasswordVisibility('settings-confirm-pass')" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); cursor: pointer; user-select: none;">👁️</span>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn primary-btn" style="width: auto; padding: 0.75rem 2rem; margin-top: 0.5rem;">Update Password</button>
+                        </form>
+                        <div id="settings-password-msg" class="message"></div>
+                    </div>
+                    
+                    <!-- Appearance Tab -->
+                    <div class="settings-tab-pane" id="tab-pane-appearance">
+                        <h2 class="settings-pane-title">Appearance Settings</h2>
+                        <p class="settings-pane-desc">Customize the theme, accent color, and spacing of the portal.</p>
+                        
+                        <div class="appearance-group" style="margin-top: 1.5rem;">
+                            <h3 style="margin-bottom: 0.75rem; font-size: 1rem;">Theme Mode</h3>
+                            <div class="theme-picker-row" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                                <label class="theme-option-card" style="flex: 1; min-width: 120px; cursor: pointer; display: flex; flex-direction: column; align-items: center; background: rgba(0,0,0,0.2); border: 1px solid var(--card-border); padding: 1rem; border-radius: 8px; transition: border-color 0.2s;">
+                                    <input type="radio" name="settings-theme" value="dark" checked style="margin-bottom: 0.5rem;">
+                                    <span style="font-size: 0.9rem;">Dark Theme</span>
+                                </label>
+                                <label class="theme-option-card" style="flex: 1; min-width: 120px; cursor: pointer; display: flex; flex-direction: column; align-items: center; background: rgba(0,0,0,0.2); border: 1px solid var(--card-border); padding: 1rem; border-radius: 8px; transition: border-color 0.2s;">
+                                    <input type="radio" name="settings-theme" value="light" style="margin-bottom: 0.5rem;">
+                                    <span style="font-size: 0.9rem;">Light Theme</span>
+                                </label>
+                                <label class="theme-option-card" style="flex: 1; min-width: 120px; cursor: pointer; display: flex; flex-direction: column; align-items: center; background: rgba(0,0,0,0.2); border: 1px solid var(--card-border); padding: 1rem; border-radius: 8px; transition: border-color 0.2s;">
+                                    <input type="radio" name="settings-theme" value="system" style="margin-bottom: 0.5rem;">
+                                    <span style="font-size: 0.9rem;">System Default</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="appearance-group" style="margin-top: 2rem;">
+                            <h3 style="margin-bottom: 0.75rem; font-size: 1rem;">Accent Color</h3>
+                            <div class="accent-picker-row" style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                                <label class="accent-option" style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;">
+                                    <input type="radio" name="settings-accent" value="purple" checked>
+                                    <span class="accent-dot purple-dot" style="text-shadow: 0 0 8px rgba(99, 102, 241, 0.5);">🟣</span>
+                                    <span>Purple</span>
+                                </label>
+                                <label class="accent-option" style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;">
+                                    <input type="radio" name="settings-accent" value="blue">
+                                    <span class="accent-dot blue-dot" style="text-shadow: 0 0 8px rgba(59, 130, 246, 0.5);">🔵</span>
+                                    <span>Blue</span>
+                                </label>
+                                <label class="accent-option" style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;">
+                                    <input type="radio" name="settings-accent" value="emerald">
+                                    <span class="accent-dot emerald-dot" style="text-shadow: 0 0 8px rgba(16, 185, 129, 0.5);">🟢</span>
+                                    <span>Emerald</span>
+                                </label>
+                                <label class="accent-option" style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;">
+                                    <input type="radio" name="settings-accent" value="rose">
+                                    <span class="accent-dot rose-dot" style="text-shadow: 0 0 8px rgba(244, 63, 94, 0.5);">🔴</span>
+                                    <span>Rose</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="appearance-group" style="margin-top: 2rem;">
+                            <h3 style="margin-bottom: 0.75rem; font-size: 1rem;">Layout Densities</h3>
+                            <div class="layout-picker-row" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                <label class="layout-density-option" style="cursor: pointer; display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem;">
+                                    <input type="radio" name="settings-layout" value="compact">
+                                    <span>Compact (Tight padding, smaller fonts)</span>
+                                </label>
+                                <label class="layout-density-option" style="cursor: pointer; display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem;">
+                                    <input type="radio" name="settings-layout" value="comfortable" checked>
+                                    <span>Comfortable (Standard layout spacing)</span>
+                                </label>
+                                <label class="layout-density-option" style="cursor: pointer; display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem;">
+                                    <input type="radio" name="settings-layout" value="spacious">
+                                    <span>Spacious (Generous padding, larger text)</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Notifications Tab -->
+                    <div class="settings-tab-pane" id="tab-pane-notifications">
+                        <h2 class="settings-pane-title">Notification Settings</h2>
+                        <p class="settings-pane-desc">Choose which notification updates and alerts you wish to receive.</p>
+                        
+                        <div class="settings-switch-list" style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+                            <div class="settings-switch-item" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.15); padding: 1rem; border-radius: 8px; border: 1px solid var(--card-border);">
+                                <div class="switch-info" style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                    <span class="switch-title" style="font-weight: 600; font-size: 0.95rem;">Email Notifications</span>
+                                    <span class="switch-desc" style="font-size: 0.8rem; color: var(--text-secondary);">Receive security warnings and announcements via email.</span>
+                                </div>
+                                <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                                    <input type="checkbox" id="settings-notif-email" checked style="opacity: 0; width: 0; height: 0;">
+                                    <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.15); transition: .4s; border-radius: 24px;"></span>
+                                </label>
+                            </div>
+                            <div class="settings-switch-item" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.15); padding: 1rem; border-radius: 8px; border: 1px solid var(--card-border);">
+                                <div class="switch-info" style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                    <span class="switch-title" style="font-weight: 600; font-size: 0.95rem;">Leave Approval Alerts</span>
+                                    <span class="switch-desc" style="font-size: 0.8rem; color: var(--text-secondary);">Receive immediate updates on submitted leaves status updates.</span>
+                                </div>
+                                <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                                    <input type="checkbox" id="settings-notif-leave" checked style="opacity: 0; width: 0; height: 0;">
+                                    <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.15); transition: .4s; border-radius: 24px;"></span>
+                                </label>
+                            </div>
+                            <div class="settings-switch-item" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.15); padding: 1rem; border-radius: 8px; border: 1px solid var(--card-border);">
+                                <div class="switch-info" style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                    <span class="switch-title" style="font-weight: 600; font-size: 0.95rem;">Student Update Alerts</span>
+                                    <span class="switch-desc" style="font-size: 0.8rem; color: var(--text-secondary);">Get notified when a student record has been updated.</span>
+                                </div>
+                                <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                                    <input type="checkbox" id="settings-notif-student" checked style="opacity: 0; width: 0; height: 0;">
+                                    <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.15); transition: .4s; border-radius: 24px;"></span>
+                                </label>
+                            </div>
+                            <div class="settings-switch-item" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.15); padding: 1rem; border-radius: 8px; border: 1px solid var(--card-border);">
+                                <div class="switch-info" style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                    <span class="switch-title" style="font-weight: 600; font-size: 0.95rem;">Security Login Alerts</span>
+                                    <span class="switch-desc" style="font-size: 0.8rem; color: var(--text-secondary);">Notify on login attempts from unrecognized devices.</span>
+                                </div>
+                                <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                                    <input type="checkbox" id="settings-notif-security" checked style="opacity: 0; width: 0; height: 0;">
+                                    <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.15); transition: .4s; border-radius: 24px;"></span>
+                                </label>
+                            </div>
+                            <div class="settings-switch-item" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.15); padding: 1rem; border-radius: 8px; border: 1px solid var(--card-border);">
+                                <div class="switch-info" style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                    <span class="switch-title" style="font-weight: 600; font-size: 0.95rem;">Dashboard Notifications</span>
+                                    <span class="switch-desc" style="font-size: 0.8rem; color: var(--text-secondary);">Show dynamic banner notifications in portal header.</span>
+                                </div>
+                                <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                                    <input type="checkbox" id="settings-notif-dashboard" checked style="opacity: 0; width: 0; height: 0;">
+                                    <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.15); transition: .4s; border-radius: 24px;"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Preferences Tab -->
+                    <div class="settings-tab-pane" id="tab-pane-preferences">
+                        <h2 class="settings-pane-title">User Preferences</h2>
+                        <p class="settings-pane-desc">Personalize behavior and system usability settings.</p>
+                        
+                        <div class="settings-switch-list" style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+                            <div class="settings-switch-item" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.15); padding: 1rem; border-radius: 8px; border: 1px solid var(--card-border);">
+                                <div class="switch-info" style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                    <span class="switch-title" style="font-weight: 600; font-size: 0.95rem;">Enable Interface Animations</span>
+                                    <span class="switch-desc" style="font-size: 0.8rem; color: var(--text-secondary);">Use micro-interactions and grid transition layouts.</span>
+                                </div>
+                                <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                                    <input type="checkbox" id="settings-pref-animations" checked style="opacity: 0; width: 0; height: 0;">
+                                    <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.15); transition: .4s; border-radius: 24px;"></span>
+                                </label>
+                            </div>
+                            <div class="settings-switch-item" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.15); padding: 1rem; border-radius: 8px; border: 1px solid var(--card-border);">
+                                <div class="switch-info" style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                    <span class="switch-title" style="font-weight: 600; font-size: 0.95rem;">Reduce Motion</span>
+                                    <span class="switch-desc" style="font-size: 0.8rem; color: var(--text-secondary);">Disable transitions and visual slide animations immediately.</span>
+                                </div>
+                                <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                                    <input type="checkbox" id="settings-pref-motion" style="opacity: 0; width: 0; height: 0;">
+                                    <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.15); transition: .4s; border-radius: 24px;"></span>
+                                </label>
+                            </div>
+                            <div class="settings-switch-item" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.15); padding: 1rem; border-radius: 8px; border: 1px solid var(--card-border);">
+                                <div class="switch-info" style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                    <span class="switch-title" style="font-weight: 600; font-size: 0.95rem;">Sticky Navbar Position</span>
+                                    <span class="switch-desc" style="font-size: 0.8rem; color: var(--text-secondary);">Fix navigation bar location to top during directory scrolling.</span>
+                                </div>
+                                <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                                    <input type="checkbox" id="settings-pref-sticky" checked style="opacity: 0; width: 0; height: 0;">
+                                    <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.15); transition: .4s; border-radius: 24px;"></span>
+                                </label>
+                            </div>
+                            <div class="settings-switch-item" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.15); padding: 1rem; border-radius: 8px; border: 1px solid var(--card-border);">
+                                <div class="switch-info" style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                    <span class="switch-title" style="font-weight: 600; font-size: 0.95rem;">Compact Table View</span>
+                                    <span class="switch-desc" style="font-size: 0.8rem; color: var(--text-secondary);">Display student directory lists with thin margins and borders.</span>
+                                </div>
+                                <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                                    <input type="checkbox" id="settings-pref-compact-table" style="opacity: 0; width: 0; height: 0;">
+                                    <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.15); transition: .4s; border-radius: 24px;"></span>
+                                </label>
+                            </div>
+                            <div class="settings-switch-item" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.15); padding: 1rem; border-radius: 8px; border: 1px solid var(--card-border);">
+                                <div class="switch-info" style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                    <span class="switch-title" style="font-weight: 600; font-size: 0.95rem;">Auto Save Settings Changes</span>
+                                    <span class="switch-desc" style="font-size: 0.8rem; color: var(--text-secondary);">Auto persist customization values upon clicking theme/switch controls.</span>
+                                </div>
+                                <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                                    <input type="checkbox" id="settings-pref-autosave" checked style="opacity: 0; width: 0; height: 0;">
+                                    <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.15); transition: .4s; border-radius: 24px;"></span>
+                                </label>
+                            </div>
+                            <div class="settings-switch-item" style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.15); padding: 1rem; border-radius: 8px; border: 1px solid var(--card-border);">
+                                <div class="switch-info" style="display: flex; flex-direction: column; gap: 0.25rem;">
+                                    <span class="switch-title" style="font-weight: 600; font-size: 0.95rem;">Remember Last Visited Directory Page</span>
+                                    <span class="switch-desc" style="font-size: 0.8rem; color: var(--text-secondary);">Save filter selections and current professor card active choices.</span>
+                                </div>
+                                <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                                    <input type="checkbox" id="settings-pref-remember" checked style="opacity: 0; width: 0; height: 0;">
+                                    <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.15); transition: .4s; border-radius: 24px;"></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Role-Specific Preferences -->
+                        <div id="pref-role-specific-container" style="margin-top: 2rem;">
+                            <!-- Injected dynamically based on role -->
+                        </div>
+                    </div>
+                    
+                    <!-- Privacy & Session Tab -->
+                    <div class="settings-tab-pane" id="tab-pane-privacy">
+                        <h2 class="settings-pane-title">Privacy & active sessions</h2>
+                        <p class="settings-pane-desc">Inspect security login locations and manage active portal connections.</p>
+                        
+                        <div class="session-list-section" style="margin-top: 1.5rem;">
+                            <h3 style="font-size: 1rem; margin-bottom: 0.75rem;">Active Login Sessions</h3>
+                            <div id="settings-session-list" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                <!-- Sessions injected dynamically -->
+                            </div>
+                            <button id="btn-logout-others" class="btn danger-btn" style="margin-top: 1.5rem; width: auto; display: inline-flex; align-items: center; gap: 0.5rem;">
+                                🔓 Logout Other Active Sessions
+                            </button>
+                        </div>
+                        
+                        <!-- Admin-Only System Controls -->
+                        <div id="admin-only-controls-section" class="session-list-section" style="margin-top: 2rem; display: none;">
+                            <h3 style="font-size: 1rem; margin-bottom: 0.75rem;">Admin Core System Controls</h3>
+                            <div class="admin-controls-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1rem;">
+                                <button class="btn secondary-btn" style="text-align: left; padding: 1rem; border-radius: 8px; display: flex; flex-direction: column; gap: 0.25rem; width: 100%;">
+                                    <strong>👤 Manage User Accounts</strong>
+                                    <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: normal; text-align: left;">Configure faculty log details.</span>
+                                </button>
+                                <button class="btn secondary-btn" style="text-align: left; padding: 1rem; border-radius: 8px; display: flex; flex-direction: column; gap: 0.25rem; width: 100%;">
+                                    <strong>💾 Backup System Database</strong>
+                                    <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: normal; text-align: left;">Save a PostgreSQL dump copy.</span>
+                                </button>
+                                <button class="btn secondary-btn" style="text-align: left; padding: 1rem; border-radius: 8px; display: flex; flex-direction: column; gap: 0.25rem; width: 100%;">
+                                    <strong>🔍 Security Policy Logs</strong>
+                                    <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: normal; text-align: left;">Inspect firewall access audits.</span>
+                                </button>
+                                <button class="btn secondary-btn" style="text-align: left; padding: 1rem; border-radius: 8px; display: flex; flex-direction: column; gap: 0.25rem; width: 100%;">
+                                    <strong>🛠️ System Maintenance</strong>
+                                    <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: normal; text-align: left;">Toggle maintenance route overlays.</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Admin Security Dashboard Section -->
+        <section id="security-section" class="glass-card security-section" hidden style="animation: pageFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
+            <div class="breadcrumb">Dashboard / Security</div>
+            
+            <div class="dashboard-header-container" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h1 class="dashboard-title" style="margin-bottom: 0.25rem;">Security Hardening Audit Dashboard</h1>
+                    <p class="dashboard-subtitle" style="margin-bottom: 0;">Cybersecurity parameters, access safety audits, real-time safety logs, and lockouts.</p>
+                </div>
+            </div>
+            
+            <!-- Audit Meter Cards -->
+            <div class="stats-row" style="margin-bottom: 2rem;">
+                <div class="stats-card">
+                    <div class="stats-icon">🔒</div>
+                    <div class="stats-info">
+                        <span class="stats-label">Secure Headers (CSP/XFO)</span>
+                        <h3 id="security-audit-headers" class="stats-value" style="font-size: 1.1rem;">Checking...</h3>
+                    </div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-icon">🛡️</div>
+                    <div class="stats-info">
+                        <span class="stats-label">Restricted CORS Origins</span>
+                        <h3 id="security-audit-cors" class="stats-value" style="font-size: 1.1rem;">Checking...</h3>
+                    </div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-icon">🟢</div>
+                    <div class="stats-info">
+                        <span class="stats-label">HTTPS Redirect Status</span>
+                        <h3 id="security-audit-https" class="stats-value" style="font-size: 1.1rem;">Checking...</h3>
+                    </div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-icon">🔌</div>
+                    <div class="stats-info">
+                        <span class="stats-label">Open Ports Audit</span>
+                        <h3 id="security-audit-ports" class="stats-value" style="font-size: 1.1rem;">Checking...</h3>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="security-grid-layout" style="display: grid; grid-template-columns: 2fr 1.1fr; gap: 1.5rem; margin-top: 1.5rem;">
+                <!-- Audit Logs Feed Table -->
+                <div class="glass-card" style="padding: 1.5rem; border-radius: 12px; background: rgba(0,0,0,0.2);">
+                    <h3 style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; font-size: 1.1rem;">
+                        <span>📜 Safety & Access Audit Logs</span>
+                        <button id="refresh-security-logs-btn" class="btn secondary-btn" style="width: auto; padding: 0.25rem 0.75rem; font-size: 0.8rem;">Refresh Logs</button>
+                    </h3>
+                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto; border: 1px solid var(--card-border); border-radius: 8px;">
+                        <table class="security-logs-table" style="width: 100%; border-collapse: collapse; font-size: 0.8rem;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid var(--card-border); text-align: left; background: #11102e; position: sticky; top: 0; z-index: 10;">
+                                    <th style="padding: 0.6rem;">Timestamp</th>
+                                    <th style="padding: 0.6rem;">User</th>
+                                    <th style="padding: 0.6rem;">Action</th>
+                                    <th style="padding: 0.6rem;">IP Address</th>
+                                    <th style="padding: 0.6rem;">Device / Browser</th>
+                                    <th style="padding: 0.6rem;">Details</th>
+                                </tr>
+                            </thead>
+                            <tbody id="security-logs-tbody">
+                                <!-- Dynamic logs -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Side Panel: Active Sessions & Anomalies -->
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <!-- Active Account Sessions -->
+                    <div class="glass-card" style="padding: 1.5rem; border-radius: 12px; background: rgba(0,0,0,0.2);">
+                        <h3 style="margin-bottom: 1rem; font-size: 1.1rem;">👥 Global Active Sessions</h3>
+                        <div id="security-active-sessions-list" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <!-- Active session items -->
+                        </div>
+                    </div>
+                    
+                    <!-- Anomalies / Locked Accounts -->
+                    <div class="glass-card" style="padding: 1.5rem; border-radius: 12px; background: rgba(0,0,0,0.2); border: 1px solid rgba(239, 68, 68, 0.3);">
+                        <h3 style="margin-bottom: 1rem; color: var(--error-color); font-size: 1.1rem;">⚠️ Lockouts & Suspicious Anomalies</h3>
+                        <div id="security-lockouts-list" style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.85rem;">
+                            <!-- Lockouts list -->
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
     </main>
     
@@ -113,14 +670,14 @@
     <div id="edit-modal" class="modal-overlay" hidden>
         <section class="glass-card modal-card">
             <div class="modal-header">
-                <h2>Edit Student Record</h2>
+                <h2>Edit Student</h2>
                 <button id="close-edit-modal" class="btn secondary-btn" type="button">Close</button>
             </div>
             <form id="edit-student-form">
                 <input type="hidden" id="edit_student_id">
-                <div class="input-group">
+                <div class="input-group" id="select_edit_student_container">
                     <label for="select_edit_student">Select Student to Edit</label>
-                    <select id="select_edit_student" required>
+                    <select id="select_edit_student">
                         <option value="">-- Choose a student --</option>
                     </select>
                 </div>
@@ -176,74 +733,401 @@
                     <label for="edit_ctc_2">CTC 2</label>
                     <input type="text" id="edit_ctc_2" placeholder="e.g., 10" disabled>
                 </div>
-                <button type="submit" class="btn primary-btn">Save Changes</button>
+                <div class="edit-modal-actions">
+                    <button type="submit" class="btn primary-btn">Save Changes</button>
+                    <button type="button" id="edit-modal-delete-btn" class="btn btn-outline-danger">Delete Student</button>
+                </div>
             </form>
             <div id="edit-msg" class="message"></div>
         </section>
     </div>
 
-    <script src="app.js?v=20260513-8"></script>
+    <!-- Delete Student Confirmation Modal -->
+    <div id="delete-student-modal" class="modal-overlay" hidden>
+        <section class="glass-card modal-card delete-confirm-modal" style="max-width: 420px; text-align: center;">
+            <div class="modal-header" style="border-bottom: none; justify-content: center; margin-bottom: 0.5rem;">
+                <h2 style="font-size: 1.5rem; color: var(--error-color);">Delete Student?</h2>
+            </div>
+            <div class="modal-body-content" style="margin-bottom: 1.5rem; text-align: center;">
+                <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-primary);">
+                    Are you sure you want to delete<br>
+                    <strong id="delete-student-name-span" style="color: var(--primary-color); font-size: 1.15rem; display: block; margin: 0.75rem 0; font-weight: 600;">-</strong>
+                    This action cannot be undone.
+                </p>
+            </div>
+            <div class="modal-actions" style="display: flex; gap: 0.75rem; justify-content: center;">
+                <button id="cancel-delete-student-btn" class="btn secondary-btn" type="button" style="width: auto; padding: 0.6rem 1.25rem; font-size: 0.9rem;">Cancel</button>
+                <button id="confirm-delete-student-btn" class="btn danger-btn" type="button" style="width: auto; padding: 0.6rem 1.25rem; font-size: 0.9rem;">Delete</button>
+            </div>
+            <div id="delete-student-msg" class="message"></div>
+        </section>
+    </div>
+
+    <div id="view-modal" class="modal-overlay" hidden>
+        <section class="glass-card modal-card">
+            <div class="modal-header">
+                <h2>Student Details</h2>
+                <button id="close-view-modal" class="btn secondary-btn" type="button">Close</button>
+            </div>
+            <div class="view-details-content">
+                <div class="detail-group">
+                    <span class="detail-label">Roll Number</span>
+                    <span id="view_roll_number" class="detail-value">-</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Full Name</span>
+                    <span id="view_name" class="detail-value">-</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Stream</span>
+                    <span id="view_be_stream" class="detail-value">-</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">1st Offer</span>
+                    <span id="view_first_offer" class="detail-value">-</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Company 1</span>
+                    <span id="view_company_1" class="detail-value">-</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">CTC 1</span>
+                    <span id="view_ctc_1" class="detail-value">-</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Stipend 1</span>
+                    <span id="view_stipend_1" class="detail-value">-</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">2nd Offer</span>
+                    <span id="view_second_offer" class="detail-value">-</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Company 2</span>
+                    <span id="view_company_2" class="detail-value">-</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">CTC 2</span>
+                    <span id="view_ctc_2" class="detail-value">-</span>
+                </div>
+            </div>
+            <div class="view-modal-actions" style="margin-top: 1.5rem; display: flex; justify-content: flex-end;" id="view-modal-actions-container">
+                <button id="btn-edit-from-view" class="btn primary-btn" type="button" style="width: auto; padding: 0.6rem 1.25rem;">Edit Student</button>
+            </div>
+        </section>
+    </div>
+
+    <div id="add-prof-modal" class="modal-overlay" hidden>
+        <section class="glass-card modal-card">
+            <div class="modal-header">
+                <h2>Add Professor</h2>
+                <button id="close-add-prof-modal" class="btn secondary-btn" type="button">Close</button>
+            </div>
+            <form id="add-professor-form">
+                <div class="input-group">
+                    <label for="prof_full_name">Full Name</label>
+                    <input type="text" id="prof_full_name" required placeholder="e.g., Harpreet Kaur thind">
+                </div>
+                <div class="input-group">
+                    <label for="prof_username">Username</label>
+                    <input type="text" id="prof_username" required placeholder="e.g., harpreet">
+                </div>
+                <div class="input-group">
+                    <label for="prof_password">Password</label>
+                    <input type="password" id="prof_password" required placeholder="Enter password">
+                </div>
+                <div class="input-group">
+                    <label for="prof_employee_id">Employee ID</label>
+                    <input type="text" id="prof_employee_id" required placeholder="e.g., EMP001">
+                </div>
+                <div class="input-group">
+                    <label for="prof_department">Department</label>
+                    <select id="prof_department" required>
+                        <option value="CSE">CSE</option>
+                        <option value="ISE">ISE</option>
+                        <option value="ECE">ECE</option>
+                        <option value="ME">ME</option>
+                        <option value="CV">CV</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="prof_designation">Designation/Post</label>
+                    <select id="prof_designation" required>
+                        <option value="Assistant Professor">Assistant Professor</option>
+                        <option value="Associate Professor">Associate Professor</option>
+                        <option value="Professor">Professor</option>
+                        <option value="Head of Department">Head of Department</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="prof_email">Email</label>
+                    <input type="email" id="prof_email" placeholder="e.g., harpreet@college.edu">
+                </div>
+                <div class="input-group">
+                    <label for="prof_phone">Phone Number</label>
+                    <input type="text" id="prof_phone" placeholder="e.g., 9876543210">
+                </div>
+
+                <button type="submit" class="btn primary-btn">Save Professor</button>
+            </form>
+            <div id="add-prof-msg" class="message"></div>
+        </section>
+    </div>
+
+    <div id="edit-prof-modal" class="modal-overlay" hidden>
+        <section class="glass-card modal-card">
+            <div class="modal-header">
+                <h2>Edit Professor Details</h2>
+                <button id="close-edit-prof-modal" class="btn secondary-btn" type="button">Close</button>
+            </div>
+            <form id="edit-professor-form">
+                <input type="hidden" id="edit_prof_original_username">
+                <div class="input-group">
+                    <label for="edit_prof_full_name">Full Name</label>
+                    <input type="text" id="edit_prof_full_name" required placeholder="e.g., Harpreet Kaur thind">
+                </div>
+                <div class="input-group">
+                    <label for="edit_prof_employee_id">Employee ID</label>
+                    <input type="text" id="edit_prof_employee_id" required placeholder="e.g., EMP001">
+                </div>
+                <div class="input-group">
+                    <label for="edit_prof_department">Department</label>
+                    <select id="edit_prof_department" required>
+                        <option value="CSE">CSE</option>
+                        <option value="ISE">ISE</option>
+                        <option value="ECE">ECE</option>
+                        <option value="ME">ME</option>
+                        <option value="CV">CV</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="edit_prof_designation">Designation/Post</label>
+                    <select id="edit_prof_designation" required>
+                        <option value="Assistant Professor">Assistant Professor</option>
+                        <option value="Associate Professor">Associate Professor</option>
+                        <option value="Professor">Professor</option>
+                        <option value="Head of Department">Head of Department</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="edit_prof_email">Email</label>
+                    <input type="email" id="edit_prof_email" placeholder="e.g., harpreet@college.edu">
+                </div>
+                <div class="input-group">
+                    <label for="edit_prof_phone">Phone Number</label>
+                    <input type="text" id="edit_prof_phone" placeholder="e.g., 9876543210">
+                </div>
+
+                <div class="input-group">
+                    <label for="edit_prof_password">New Password (leave blank to keep current)</label>
+                    <input type="password" id="edit_prof_password" placeholder="Enter new password">
+                </div>
+                <button type="submit" class="btn primary-btn">Save Changes</button>
+            </form>
+            <div id="edit-prof-msg" class="message"></div>
+        </section>
+    </div>
+
+    <!-- Delete Professor Confirmation Modal -->
+    <div id="delete-prof-modal" class="modal-overlay" hidden>
+        <section class="glass-card modal-card" style="max-width: 420px; text-align: center;">
+            <div class="modal-header" style="border-bottom: none; justify-content: center; margin-bottom: 0.5rem;">
+                <h2 style="font-size: 1.5rem; color: var(--error-color);">Delete Professor?</h2>
+            </div>
+            <div class="modal-body-content" style="margin-bottom: 1.5rem; text-align: center;">
+                <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-primary);">
+                    Are you sure you want to delete<br>
+                    <strong id="delete-prof-name-span" style="color: var(--primary-color); font-size: 1.15rem; display: block; margin: 0.75rem 0; font-weight: 600;">-</strong>
+                    This action cannot be undone.
+                </p>
+            </div>
+            <div class="modal-actions" style="display: flex; gap: 0.75rem; justify-content: center;">
+                <button id="cancel-delete-prof-btn" class="btn secondary-btn" type="button" style="width: auto; padding: 0.6rem 1.25rem; font-size: 0.9rem;">Cancel</button>
+                <button id="confirm-delete-prof-btn" class="btn danger-btn" type="button" style="width: auto; padding: 0.6rem 1.25rem; font-size: 0.9rem; background-color: var(--error-color); color: white; border: none;">Delete Professor</button>
+            </div>
+            <div id="delete-prof-msg" class="message"></div>
+        </section>
+    </div>
+
+    <!-- Leave Submission Modal (for Professors) -->
+    <div id="leave-submission-modal" class="modal-overlay" hidden>
+        <section class="glass-card modal-card">
+            <div class="modal-header">
+                <h2>Submit Leave Request</h2>
+                <button id="close-leave-modal" class="btn secondary-btn" type="button" style="width: auto; padding: 0.25rem 0.75rem;">Close</button>
+            </div>
+            <form id="leave-submission-form" enctype="multipart/form-data">
+                <div class="input-group">
+                    <label for="leave_comment">Leave Comment / Reason</label>
+                    <textarea id="leave_comment" required placeholder="Describe the reason for your leave..." rows="4"></textarea>
+                </div>
+                <div class="input-group">
+                    <label for="leave_file">Upload Leave Document (PDF or Image, max 10MB)</label>
+                    <input type="file" id="leave_file" required accept=".pdf, .jpg, .jpeg, .png">
+                </div>
+                <button type="submit" class="btn primary-btn">Submit Request</button>
+            </form>
+            <div id="leave-msg" class="message"></div>
+        </section>
+    </div>
+
+    <!-- Admin Leave Details Modal (for Admin) -->
+    <div id="admin-leave-details-modal" class="modal-overlay" hidden>
+        <section class="glass-card modal-card">
+            <div class="modal-header">
+                <h2>Leave Details</h2>
+                <button id="close-admin-leave-modal" class="btn secondary-btn" type="button" style="width: auto; padding: 0.25rem 0.75rem;">Close</button>
+            </div>
+            <div class="view-details-content">
+                <div class="detail-group" style="grid-column: span 2;">
+                    <span class="detail-label">Professor Name</span>
+                    <span id="leave-prof-name" class="detail-value">-</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Employee ID</span>
+                    <span id="leave-prof-emp-id" class="detail-value">-</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Status</span>
+                    <span id="leave-status-badge" class="status-badge absent">🟡 Absent</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Submitted On</span>
+                    <span id="leave-submitted-on" class="detail-value">-</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Time</span>
+                    <span id="leave-submitted-time" class="detail-value">-</span>
+                </div>
+                <div class="detail-group" style="grid-column: span 2;">
+                    <span class="detail-label">Comment / Reason</span>
+                    <span id="leave-comment-text" class="detail-value" style="white-space: pre-wrap; font-weight: normal;">-</span>
+                </div>
+            </div>
+            
+            <div class="leave-attachment-preview">
+                <span class="detail-label" style="align-self: flex-start;">Attachment Preview</span>
+                <div class="preview-container">
+                    <div id="preview-placeholder" style="color: var(--text-secondary); text-align: center;">
+                        <span style="font-size: 2.5rem; display: block; margin-bottom: 0.5rem;">📄</span>
+                        <span>No Preview Available</span>
+                    </div>
+                    <img id="preview-image" src="" alt="Leave Attachment Preview" style="display: none;">
+                    <iframe id="preview-pdf" src="" style="display: none;"></iframe>
+                </div>
+                <div style="display: flex; gap: 0.75rem; width: 100%;">
+                    <button id="btn-fullscreen-preview" class="btn secondary-btn" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        🔍 Fullscreen View
+                    </button>
+                    <a id="btn-download-attachment" href="" download class="btn primary-btn" style="flex: 1; text-align: center; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        📥 Download
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Fullscreen File Preview Modal -->
+    <div id="file-preview-modal" class="modal-overlay" hidden style="z-index: 1100;">
+        <section class="glass-card modal-card fullscreen-preview-modal-card">
+            <div class="modal-header">
+                <h2 id="fullscreen-preview-title">Document Viewer</h2>
+                <button id="close-fullscreen-preview" class="btn secondary-btn" type="button" style="width: auto; padding: 0.25rem 0.75rem;">Close</button>
+            </div>
+            <div class="fullscreen-preview-body">
+                <img id="fullscreen-preview-image" src="" alt="Fullscreen Attachment" style="display: none;">
+                <iframe id="fullscreen-preview-pdf" src="" style="display: none;"></iframe>
+            </div>
+        </section>
+    </div>
+
+    <script src="app.js?v=20260601-4"></script>
     <script>
         // Check if token exists, else redirect
         if(!localStorage.getItem('jwt_token')){
             window.location.href = 'index.html';
         }
         // Load data initially
-        window.addEventListener('DOMContentLoaded', fetchStudents);
+        window.addEventListener('DOMContentLoaded', () => {
+            if (typeof updateGreeting === 'function') {
+                updateGreeting();
+            }
+            if (typeof initializeDashboard === 'function') {
+                initializeDashboard();
+            }
+        });
 
         function toggleFirstOfferFields() {
-    const firstOffer = document.getElementById('first_offer').value;
-    const enable = firstOffer === 'true';
-    const fields = ['company_1', 'ctc_1', 'stipend_1', 'second_offer', 'company_2', 'ctc_2'];
-    fields.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.disabled = !enable;
-            if (!enable) el.value = '';
+            const firstOffer = document.getElementById('first_offer').value;
+            const hasFirstOffer = firstOffer === 'true';
+
+            // First offer fields
+            const firstOfferFields = ['company_1', 'ctc_1', 'stipend_1', 'second_offer'];
+            firstOfferFields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.disabled = !hasFirstOffer;
+                    if (!hasFirstOffer) {
+                        el.value = '';
+                    }
+                }
+            });
+
+            const secondOffer = document.getElementById('second_offer').value;
+            const hasSecondOffer = hasFirstOffer && secondOffer === 'true';
+
+            // Second offer fields
+            const secondOfferFields = ['company_2', 'ctc_2'];
+            secondOfferFields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.disabled = !hasSecondOffer;
+                    if (!hasSecondOffer) {
+                        el.value = '';
+                    }
+                }
+            });
         }
-    });
-}
 
-function toggleEditFirstOfferFields() {
-    const firstOffer = document.getElementById('edit_first_offer').value;
-    const enable = firstOffer === 'true';
-    const fields = ['edit_company_1', 'edit_ctc_1', 'edit_stipend_1', 'edit_second_offer', 'edit_company_2', 'edit_ctc_2'];
-    fields.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.disabled = !enable;
-            if (!enable) el.value = '';
+        function toggleEditFirstOfferFields() {
+            const firstOffer = document.getElementById('edit_first_offer').value;
+            const hasFirstOffer = firstOffer === 'true';
+
+            // First offer fields
+            const firstOfferFields = ['edit_company_1', 'edit_ctc_1', 'edit_stipend_1', 'edit_second_offer'];
+            firstOfferFields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.disabled = !hasFirstOffer;
+                    if (!hasFirstOffer) {
+                        el.value = '';
+                    }
+                }
+            });
+
+            const secondOffer = document.getElementById('edit_second_offer').value;
+            const hasSecondOffer = hasFirstOffer && secondOffer === 'true';
+
+            // Second offer fields
+            const secondOfferFields = ['edit_company_2', 'edit_ctc_2'];
+            secondOfferFields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.disabled = !hasSecondOffer;
+                    if (!hasSecondOffer) {
+                        el.value = '';
+                    }
+                }
+            });
         }
-    });
-}
 
-document.getElementById('first_offer')?.addEventListener('change', toggleFirstOfferFields);
+        document.getElementById('first_offer')?.addEventListener('change', toggleFirstOfferFields);
+        document.getElementById('second_offer')?.addEventListener('change', toggleFirstOfferFields);
 
-document.getElementById('edit_first_offer')?.addEventListener('change', toggleEditFirstOfferFields);
+        document.getElementById('edit_first_offer')?.addEventListener('change', toggleEditFirstOfferFields);
+        document.getElementById('edit_second_offer')?.addEventListener('change', toggleEditFirstOfferFields);
 
-// Ensure fields are correctly set when modals open
-function openAddModal() {
-    if (addModal) {
-        addModal.removeAttribute('hidden');
-        toggleFirstOfferFields();
-    }
-}
-function openEditModalFor(id) {
-    if (editModal) {
-        populateEditDropdown(id);
-        editModal.removeAttribute('hidden');
-        toggleEditFirstOfferFields();
-    }
-}
 
-// Replace existing click handlers with the new ones
-if (addBtn && addModal) {
-    addBtn.removeEventListener('click', () => { addModal.removeAttribute('hidden'); });
-    addBtn.addEventListener('click', openAddModal);
-}
-if (navEditBtn && editModal) {
-    navEditBtn.removeEventListener('click', () => { populateEditDropdown(); editModal.removeAttribute('hidden'); });
-    navEditBtn.addEventListener('click', () => { populateEditDropdown(); editModal.removeAttribute('hidden'); toggleEditFirstOfferFields(); });
-}</script>
+</script>
 </body>
 </html>
